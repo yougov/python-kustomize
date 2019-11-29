@@ -1,5 +1,7 @@
 [run]
-omit = .tox/*
+omit =
+    .tox/*
+    tests/*
 
 [report]
 show_missing = True
