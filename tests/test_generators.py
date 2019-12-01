@@ -1,24 +1,6 @@
-import os
-import shutil
-
-import pytest
 import yaml
 
 from kustomize.generators import generate
-
-
-@pytest.fixture(scope='function')
-def simple_dict_path(request, fixtures_path):
-    path = fixtures_path / 'simple_dict'
-    build_path = path / 'build'
-    os.makedirs(str(build_path), exist_ok=True)
-
-    def remove():
-        shutil.rmtree(build_path)
-
-    request.addfinalizer(remove)
-
-    return path
 
 
 def assert_yaml_equal(a, b):
@@ -30,12 +12,39 @@ def assert_yaml_equal(a, b):
     assert a_data == b_data
 
 
-def test_generates_simple_dict(simple_dict_path):
-    python_path = simple_dict_path / 'python'
-    build_path = simple_dict_path / 'build'
-    reference_path = simple_dict_path / 'reference'
+def test_generates_simple_dict(cd_fixtures, create_build_path):
+    fixtures_path = cd_fixtures('simple_dict')
+    build_path = create_build_path()
+    python_path = fixtures_path / 'python'
+    reference_path = fixtures_path / 'reference'
 
-    generate(python_path, 'my_kustomization', build_path)
+    generate(python_path, build_path, 'my_kustomization')
+
+    assert_yaml_equal(
+        build_path / 'kustomization.yaml',
+        reference_path / 'kustomization.yaml',
+    )
+    assert_yaml_equal(
+        build_path / 'deployment.yaml',
+        reference_path / 'deployment.yaml',
+    )
+    assert_yaml_equal(
+        build_path / 'configMap.yaml',
+        reference_path / 'configMap.yaml',
+    )
+    assert_yaml_equal(
+        build_path / 'service.yaml',
+        reference_path / 'service.yaml',
+    )
+
+
+def test_generates_simple_dict_defaults(cd_fixtures, create_build_path):
+    fixtures_path = cd_fixtures('simple_dict_defaults')
+    build_path = create_build_path()
+    python_path = fixtures_path / 'python'
+    reference_path = fixtures_path / 'reference'
+
+    generate(python_path, build_path)
 
     assert_yaml_equal(
         build_path / 'kustomization.yaml',

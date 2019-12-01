@@ -4,7 +4,6 @@ import sys
 from copy import deepcopy
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
 
 import yaml
 
@@ -19,10 +18,15 @@ class Resource:
     def from_reference(cls, string: str):
         parts = string.split(':')
 
-        module_name = parts[0]
-        attr_name = parts[1]
+        if len(parts) > 1:
+            module_name = parts[0]
+            attr_name = parts[1]
+        else:
+            module_name = parts[0]
+            attr_name = module_name.split('.')[-1]
 
         module = importlib.__import__(module_name)
+        importlib.reload(module)
         data = getattr(module, attr_name)
 
         return cls(
@@ -44,23 +48,37 @@ class Resource:
         return self.build_path
 
 
-def generate(source_path: Path, attr_name: str, dest_path: Path):
+def generate(
+        source_path: Path, dest_path: Path, attr_name: str = 'kustomization'):
+    source_path = source_path.absolute()
+    dest_path = dest_path.absolute()
+    os.makedirs(str(dest_path), 0o755, exist_ok=True)
+
+    prepended = False
     source_path_str = str(source_path)
     if source_path_str not in sys.path:
         sys.path.insert(0, source_path_str)
-    os.makedirs(str(dest_path), 0o755, exist_ok=True)
+        prepended = True
 
-    import kustomization as k_module
+    try:
+        import pprint; pprint.pprint(sys.path)
+        import kustomization as k_module
 
-    kustomization = deepcopy(getattr(k_module, attr_name))
-    resources = [
-        Resource.from_reference(string)
-        for string in kustomization['resources']
-    ]
-    kustomization['resources'] = [
-        str(resource.build(dest_path)) for resource in resources
-    ]
-    kustomization_path = dest_path / 'kustomization.yaml'
+        importlib.reload(k_module)
 
-    with open(str(kustomization_path), 'w') as f:
-        yaml.safe_dump(kustomization, f)
+        kustomization = deepcopy(getattr(k_module, attr_name))
+        resources = [
+            Resource.from_reference(string)
+            for string in kustomization['resources']
+        ]
+        kustomization['resources'] = [
+            str(resource.build(dest_path)) for resource in resources
+        ]
+
+        kustomization_path = dest_path / 'kustomization.yaml'
+
+        with open(str(kustomization_path), 'w') as f:
+            yaml.safe_dump(kustomization, f)
+    finally:
+        if prepended:
+            sys.path.pop(0)
