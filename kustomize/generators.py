@@ -2,7 +2,7 @@ import importlib
 import os
 import sys
 from copy import deepcopy
-from dataclasses import dataclass
+from dataclasses import dataclass, is_dataclass, asdict
 from pathlib import Path
 
 import yaml
@@ -27,7 +27,7 @@ class Resource:
 
         module = importlib.__import__(module_name)
         importlib.reload(module)
-        data = getattr(module, attr_name)
+        data = to_dict(getattr(module, attr_name))
 
         return cls(
             module_name=module_name,
@@ -61,12 +61,12 @@ def generate(
         prepended = True
 
     try:
-        import pprint; pprint.pprint(sys.path)
         import kustomization as k_module
 
         importlib.reload(k_module)
 
-        kustomization = deepcopy(getattr(k_module, attr_name))
+        kustomization = to_dict(getattr(k_module, attr_name))
+
         resources = [
             Resource.from_reference(string)
             for string in kustomization['resources']
@@ -82,3 +82,12 @@ def generate(
     finally:
         if prepended:
             sys.path.pop(0)
+
+
+def to_dict(obj):
+    if is_dataclass(obj):
+        obj = asdict(obj)
+
+    obj = deepcopy(obj)
+
+    return obj

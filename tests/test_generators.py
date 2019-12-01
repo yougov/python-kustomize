@@ -62,3 +62,29 @@ def test_generates_simple_dict_defaults(cd_fixtures, create_build_path):
         build_path / 'service.yaml',
         reference_path / 'service.yaml',
     )
+
+
+def test_generates_dataclasses(cd_fixtures, create_build_path):
+    fixtures_path = cd_fixtures('dataclasses_')
+    build_path = create_build_path()
+    python_path = fixtures_path / 'python'
+    reference_path = fixtures_path / 'reference'
+
+    generate(python_path, build_path)
+
+    assert_yaml_equal(
+        build_path / 'kustomization.yaml',
+        reference_path / 'kustomization.yaml',
+    )
+    assert_yaml_equal(
+        build_path / 'deployment.yaml',
+        reference_path / 'deployment.yaml',
+    )
+    assert_yaml_equal(
+        build_path / 'configMap.yaml',
+        reference_path / 'configMap.yaml',
+    )
+    assert_yaml_equal(
+        build_path / 'service.yaml',
+        reference_path / 'service.yaml',
+    )
