@@ -9,7 +9,7 @@ import yaml
 
 
 @dataclass
-class Resource:
+class Extension:
     module_name: str
     attr_name: str
     data: dict
@@ -52,29 +52,28 @@ def generate(
         source_path: Path, dest_path: Path, attr_name: str = 'kustomization'):
     source_path = source_path.absolute()
     dest_path = dest_path.absolute()
-    os.makedirs(str(dest_path), 0o755, exist_ok=True)
 
+    for (dirpath, dirnames, filenames) in os.walk(str(source_path)):
+        for dirname in dirnames:
+            down_source_path = source_path / dirname
+            down_dest_path = dest_path / dirname
+            generate(down_source_path, down_dest_path, attr_name)
+
+    _generate_for_source(source_path, dest_path, attr_name)
+
+
+def _generate_for_source(source_path: Path, dest_path: Path, attr_name: str):
+    if not (source_path / 'kustomization.py').is_file():
+        return
+
+    os.makedirs(str(dest_path), 0o755, exist_ok=True)
     prepended = False
     source_path_str = str(source_path)
     if source_path_str not in sys.path:
         sys.path.insert(0, source_path_str)
         prepended = True
-
     try:
-        import kustomization as k_module
-
-        importlib.reload(k_module)
-
-        kustomization = to_dict(getattr(k_module, attr_name))
-
-        resources = [
-            Resource.from_reference(string)
-            for string in kustomization['resources']
-        ]
-        kustomization['resources'] = [
-            str(resource.build(dest_path)) for resource in resources
-        ]
-
+        kustomization = _get_kustomization_data(attr_name, dest_path)
         kustomization_path = dest_path / 'kustomization.yaml'
 
         with open(str(kustomization_path), 'w') as f:
@@ -82,6 +81,28 @@ def generate(
     finally:
         if prepended:
             sys.path.pop(0)
+
+
+def _get_kustomization_data(attr_name, dest_path):
+    import kustomization as k_module
+
+    importlib.reload(k_module)
+    kustomization = to_dict(getattr(k_module, attr_name))
+
+    extensions_names = ('resources', 'patches')
+
+    for extension_name in extensions_names:
+        if extension_name not in kustomization:
+            continue
+        extensions = [
+            Extension.from_reference(string)
+            for string in kustomization[extension_name]
+        ]
+        kustomization[extension_name] = [
+            str(resource.build(dest_path)) for resource in extensions
+        ]
+
+    return kustomization
 
 
 def to_dict(obj):
