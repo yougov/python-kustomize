@@ -1,13 +1,13 @@
-Welcome to skeleton documentation!
-========================================
-
 .. toctree::
    :maxdepth: 1
 
    history
 
 
-.. automodule:: skeleton
+.. include:: ../README.rst
+
+
+.. automodule:: kustomize
     :members:
     :undoc-members:
     :show-inheritance:
