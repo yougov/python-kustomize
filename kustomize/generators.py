@@ -96,7 +96,7 @@ def _get_kustomization_data(attr_name, dest_path):
     )
 
     for extension_name in extensions_names:
-        if extension_name not in kustomization:
+        if kustomization.get(extension_name) is None:
             continue
         extensions = [
             Extension.from_reference(string)
@@ -105,6 +105,12 @@ def _get_kustomization_data(attr_name, dest_path):
         kustomization[extension_name] = [
             str(resource.build(dest_path)) for resource in extensions
         ]
+
+    if kustomization.get('patchesJson6902') is not None:
+        patches = kustomization['patchesJson6902']
+        for patch in patches:
+            extension = Extension.from_reference(patch['path'])
+            patch['path'] = str(extension.build(dest_path))
 
     return kustomization
 

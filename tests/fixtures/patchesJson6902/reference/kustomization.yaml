@@ -1,0 +1,16 @@
+# Example configuration for the webserver
+# at https://github.com/monopole/hello
+commonLabels:
+  app: hello
+
+resources:
+- deployment.yaml
+- service.yaml
+- configMap.yaml
+
+patchesJson6902:
+- target:
+    version: v1
+    kind: Deployment
+    name: my-deployment
+  path: add_init_container.yaml
