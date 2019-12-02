@@ -4,6 +4,8 @@ from pathlib import Path
 
 import pytest
 
+from .templates_fixtures import *  # noqa
+
 
 @pytest.fixture
 def fixtures_path():
