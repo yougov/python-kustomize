@@ -2,5 +2,5 @@ commonLabels:
   env: staging
 bases:
   - ../../base
-patches:
+patchesStrategicMerge:
   - special_labels.yaml

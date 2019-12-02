@@ -5,7 +5,7 @@ kustomization = {
     'bases': [
         '../../base',
     ],
-    'patches': [
+    'patchesStrategicMerge': [
         'special_labels',
     ],
 }

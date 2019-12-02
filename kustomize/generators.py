@@ -89,7 +89,11 @@ def _get_kustomization_data(attr_name, dest_path):
     importlib.reload(k_module)
     kustomization = to_dict(getattr(k_module, attr_name))
 
-    extensions_names = ('resources', 'patches')
+    extensions_names = (
+        'resources',
+        'patches',
+        'patchesStrategicMerge',
+    )
 
     for extension_name in extensions_names:
         if extension_name not in kustomization:
