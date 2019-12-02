@@ -1,3 +1,8 @@
+0.1.2
+=====
+
+* Supporting patchesJson6902
+
 0.1.1
 =====
 
