@@ -120,6 +120,8 @@ def to_dict(obj):
         obj = asdict(obj)
     elif hasattr(obj, 'to_dict'):
         obj = obj.to_dict()
+    elif hasattr(obj, '__dict__'):
+        obj = obj.__dict__
 
     obj = deepcopy(obj)
 
