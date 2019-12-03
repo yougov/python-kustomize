@@ -118,6 +118,8 @@ def _get_kustomization_data(attr_name, dest_path):
 def to_dict(obj):
     if is_dataclass(obj):
         obj = asdict(obj)
+    elif hasattr(obj, 'to_dict'):
+        obj = obj.to_dict()
 
     obj = deepcopy(obj)
 

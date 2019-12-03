@@ -55,3 +55,14 @@ def test_generates_patchesJson6902(cd_fixtures, create_build_path):
     generate(python_path, build_path)
 
     assert_yaml_dirs_equal(build_path, reference_path)
+
+
+def test_generates_to_dict(cd_fixtures, create_build_path):
+    fixtures_path = cd_fixtures('to_dict')
+    build_path = create_build_path()
+    python_path = fixtures_path / 'python'
+    reference_path = fixtures_path / 'reference'
+
+    generate(python_path, build_path)
+
+    assert_yaml_dirs_equal(build_path, reference_path)
