@@ -44,10 +44,20 @@ just use Kustomize for the rest of the deployment.
 Installing
 ----------
 
+The only mandatory dependency to this project is ``PyYAML``. Besides this, you
+can have ``attr`` installed if you want to use their classes, and, if you're
+running on Python 3.6, you can install ``dataclasses`` to use them - although
+this project is tested on Python 3.7 and 3.8 only, it probably runs fine on 3.6.
+
 This package will be available as ``kustomize``; you may install it with pip,
 for example::
 
     $ pip install kustomize
+
+This will also install ``PyYAML`` if it's not already installed.
+
+Alternatively, you can use any other package manager capable of installing
+packages from PyPI.
 
 Usage
 -----
