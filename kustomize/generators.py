@@ -115,11 +115,23 @@ def _get_kustomization_data(attr_name, dest_path):
     return kustomization
 
 
+def is_attr_class(obj) -> bool:
+    try:
+        import attr
+    except ImportError:
+        return False
+
+    return attr.has(type(obj))
+
+
 def to_dict(obj):
     if is_dataclass(obj):
         obj = asdict(obj)
     elif hasattr(obj, 'to_dict'):
         obj = obj.to_dict()
+    elif is_attr_class(obj):
+        import attr
+        obj = attr.asdict(obj, recurse=True)
     elif hasattr(obj, '__dict__'):
         obj = obj.__dict__
 

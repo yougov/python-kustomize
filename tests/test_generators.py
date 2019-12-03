@@ -77,3 +77,14 @@ def test_generates_attributes_as_dict(cd_fixtures, create_build_path):
     generate(python_path, build_path)
 
     assert_yaml_dirs_equal(build_path, reference_path)
+
+
+def test_generates_attrs(cd_fixtures, create_build_path):
+    fixtures_path = cd_fixtures('attrs')
+    build_path = create_build_path()
+    python_path = fixtures_path / 'python'
+    reference_path = fixtures_path / 'reference'
+
+    generate(python_path, build_path)
+
+    assert_yaml_dirs_equal(build_path, reference_path)

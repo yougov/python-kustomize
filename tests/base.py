@@ -15,4 +15,7 @@ def assert_yaml_dirs_equal(a, b):
         with open(str(b_file)) as f:
             b_data = yaml.safe_load(f)
 
-        assert a_data == b_data
+        assert a_data == b_data, f"""
+        Got from {a}: {a_data}
+        Expected from {b}: {b_data}
+        """
