@@ -1,3 +1,12 @@
+0.2.0
+=====
+
+Supporting other types for generating dictionaries:
+
+* Classes with a ``to_dict`` method
+* Classes from the ``attr`` library
+* "Flat" classes that can be serialized through ``__dict__``
+
 0.1.2
 =====
 
