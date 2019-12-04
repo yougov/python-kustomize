@@ -42,8 +42,7 @@ class Extension:
 
     def build(self, dest_path: Path) -> Path:
         path = dest_path / self.build_path
-        with open(str(path), 'w') as f:
-            yaml.safe_dump(self.data, f)
+        _dump_data(self.data, path)
 
         return self.build_path
 
@@ -76,11 +75,18 @@ def _generate_for_source(source_path: Path, dest_path: Path, attr_name: str):
         kustomization = _get_kustomization_data(attr_name, dest_path)
         kustomization_path = dest_path / 'kustomization.yaml'
 
-        with open(str(kustomization_path), 'w') as f:
-            yaml.safe_dump(kustomization, f)
+        _dump_data(kustomization, kustomization_path)
     finally:
         if prepended:
             sys.path.pop(0)
+
+
+def _dump_data(data, path):
+    with open(str(path), 'w') as f:
+        if isinstance(data, tuple):
+            yaml.safe_dump_all(data, f)
+        else:
+            yaml.safe_dump(data, f)
 
 
 def _get_kustomization_data(attr_name, dest_path):

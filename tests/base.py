@@ -11,11 +11,12 @@ def assert_yaml_dirs_equal(a, b):
 
     for a_file, b_file in zip(a_files, b_files):
         with open(str(a_file)) as f:
-            a_data = yaml.safe_load(f)
+            a_data = tuple(yaml.safe_load_all(f))
         with open(str(b_file)) as f:
-            b_data = yaml.safe_load(f)
+            b_data = tuple(yaml.safe_load_all(f))
 
-        assert a_data == b_data, f"""
-        Got from {a}: {a_data}
-        Expected from {b}: {b_data}
-        """
+        for a_datum, b_datum in zip(a_data, b_data):
+            assert a_data == b_data, f"""
+            Got from {a}: {a_data}
+            Expected from {b}: {b_data}
+            """
