@@ -1,3 +1,8 @@
+0.3.1
+=====
+
+* Fixing the serialization of objects inside tuples.
+
 0.3.0
 =====
 
