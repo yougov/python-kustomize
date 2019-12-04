@@ -1,3 +1,8 @@
+0.3.0
+=====
+
+* Supporting tuples for multi-section YAML generation.
+
 0.2.0
 =====
 
