@@ -99,3 +99,14 @@ def test_generates_tuple_multiple(cd_fixtures, create_build_path):
     generate(python_path, build_path)
 
     assert_yaml_dirs_equal(build_path, reference_path)
+
+
+def test_generates_tuple_multiple_attr(cd_fixtures, create_build_path):
+    fixtures_path = cd_fixtures('tuple_multiple_attr')
+    build_path = create_build_path()
+    python_path = fixtures_path / 'python'
+    reference_path = fixtures_path / 'reference'
+
+    generate(python_path, build_path)
+
+    assert_yaml_dirs_equal(build_path, reference_path)

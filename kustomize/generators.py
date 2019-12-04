@@ -27,7 +27,7 @@ class Extension:
 
         module = importlib.__import__(module_name)
         importlib.reload(module)
-        data = to_dict(getattr(module, attr_name))
+        data = to_dict_or_dicts(getattr(module, attr_name))
 
         return cls(
             module_name=module_name,
@@ -93,7 +93,7 @@ def _get_kustomization_data(attr_name, dest_path):
     import kustomization as k_module
 
     importlib.reload(k_module)
-    kustomization = to_dict(getattr(k_module, attr_name))
+    kustomization = to_dict_or_dicts(getattr(k_module, attr_name))
 
     extensions_names = (
         'resources',
@@ -130,7 +130,9 @@ def is_attr_class(obj) -> bool:
     return attr.has(type(obj))
 
 
-def to_dict(obj):
+def to_dict_or_dicts(obj):
+    if isinstance(obj, tuple):
+        return tuple(to_dict_or_dicts(o) for o in obj)
     if is_dataclass(obj):
         obj = asdict(obj)
     elif hasattr(obj, 'to_dict'):
