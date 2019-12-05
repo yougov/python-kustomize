@@ -1,3 +1,10 @@
+0.3.2
+=====
+
+* Preferring to_dict() to dataclasses.asdict().
+  This is because objects might need to be more specific about how they
+  should convert themselves to a dict.
+
 0.3.1
 =====
 
