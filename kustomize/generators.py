@@ -133,10 +133,10 @@ def is_attr_class(obj) -> bool:
 def to_dict_or_dicts(obj):
     if isinstance(obj, tuple):
         return tuple(to_dict_or_dicts(o) for o in obj)
-    if is_dataclass(obj):
-        obj = asdict(obj)
-    elif hasattr(obj, 'to_dict'):
+    if hasattr(obj, 'to_dict'):
         obj = obj.to_dict()
+    elif is_dataclass(obj):
+        obj = asdict(obj)
     elif is_attr_class(obj):
         import attr
         obj = attr.asdict(obj, recurse=True)
