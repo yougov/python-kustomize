@@ -1,3 +1,4 @@
+import datetime as dt
 import importlib
 import os
 import sys
@@ -7,6 +8,8 @@ from pathlib import Path
 from typing import Union
 
 import yaml
+
+SERIALIZABLE_TYPES = (float, bool, bytes, str, int, dt.date, dt.datetime)
 
 
 @dataclass
@@ -94,7 +97,7 @@ def clean_data(data: Union[dict, list, tuple]):
     if isinstance(data, tuple):
         return tuple(clean_data(d) for d in data)
     if isinstance(data, list):
-        return list(clean_data(d) for d in data)
+        return [clean_data(d) for d in data]
     if not isinstance(data, dict):
         return data
     for k in list(data.keys()):
@@ -147,9 +150,52 @@ def is_attr_class(obj) -> bool:
     return attr.has(type(obj))
 
 
+def _is_kubernetes(obj):
+    return all(
+        hasattr(obj, attr)
+        for attr in ('to_dict', 'swagger_types', 'attribute_map')
+    )
+
+
+def _k8s_to_serializable(obj):
+    """Transforms from Kubernetes model objects into dicts.
+
+    Adapted and modified from the python-kubernetes library:
+    https://github.com/kubernetes-client/python
+
+    """
+
+    if obj is None:
+        return None
+    elif isinstance(obj, SERIALIZABLE_TYPES):
+        return obj
+    elif isinstance(obj, list):
+        return [_k8s_to_serializable(sub_obj) for sub_obj in obj]
+    elif isinstance(obj, tuple):
+        return tuple(_k8s_to_serializable(sub_obj) for sub_obj in obj)
+
+    if isinstance(obj, dict):
+        obj_dict = obj
+    else:
+        # Convert model obj to dict except
+        # attributes `swagger_types`, `attribute_map`
+        # and attributes which value is not None.
+        # Convert attribute name to json key in
+        # model definition for request.
+        obj_dict = {
+            obj.attribute_map[attr]: getattr(obj, attr)
+            for attr, _ in obj.swagger_types.items()
+            if getattr(obj, attr) is not None
+        }
+
+    return {key: _k8s_to_serializable(val) for key, val in obj_dict.items()}
+
+
 def to_dict_or_dicts(obj):
     if isinstance(obj, tuple):
         return tuple(to_dict_or_dicts(o) for o in obj)
+    if _is_kubernetes(obj):
+        return _k8s_to_serializable(obj)
     if hasattr(obj, 'to_dict'):
         obj = obj.to_dict()
     elif is_dataclass(obj):
