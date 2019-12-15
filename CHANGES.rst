@@ -1,3 +1,8 @@
+0.3.3
+=====
+
+* Cleaning up the data before dumping.
+
 0.3.2
 =====
 
