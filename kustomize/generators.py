@@ -85,22 +85,24 @@ def _generate_for_source(source_path: Path, dest_path: Path, attr_name: str):
 def _dump_data(data, path):
     with open(str(path), 'w') as f:
         if isinstance(data, tuple):
-            yaml.safe_dump_all(_clean_data(data), f)
+            yaml.safe_dump_all(clean_data(data), f)
         else:
-            yaml.safe_dump(_clean_data(data), f)
+            yaml.safe_dump(clean_data(data), f)
 
 
-def _clean_data(data: Union[dict, list, tuple]):
+def clean_data(data: Union[dict, list, tuple]):
     if isinstance(data, tuple):
-        return tuple(_clean_data(d) for d in data)
+        return tuple(clean_data(d) for d in data)
     if isinstance(data, list):
-        return list(_clean_data(d) for d in data)
+        return list(clean_data(d) for d in data)
+    if not isinstance(data, dict):
+        return data
     for k in list(data.keys()):
         v = data[k]
         if v is None:
             del data[k]
-        elif isinstance(v, dict):
-            data[k] = _clean_data(v)
+        else:
+            data[k] = clean_data(data[k])
     return data
 
 
@@ -139,7 +141,7 @@ def _get_kustomization_data(attr_name, dest_path):
 def is_attr_class(obj) -> bool:
     try:
         import attr
-    except ImportError:
+    except ImportError:  # pragma: no cover
         return False
 
     return attr.has(type(obj))

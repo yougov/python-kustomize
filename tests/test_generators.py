@@ -1,4 +1,4 @@
-from kustomize.generators import generate
+from kustomize.generators import generate, clean_data
 from tests.base import assert_yaml_dirs_equal
 
 
@@ -110,3 +110,53 @@ def test_generates_tuple_multiple_attr(cd_fixtures, create_build_path):
     generate(python_path, build_path)
 
     assert_yaml_dirs_equal(build_path, reference_path)
+
+
+class TestCleanData:
+    def test_cleans_up_inner_list_of_dicts(self):
+        data = {
+            'foo': {
+                'bar': {
+                    'baz': [
+                        {
+                            'FOO': 'foo',
+                            'BAR': None,
+                        }
+                    ]
+                }
+            }
+        }
+
+        assert clean_data(data) == {
+            'foo': {
+                'bar': {
+                    'baz': [
+                        {
+                            'FOO': 'foo',
+                        }
+                    ]
+                }
+            }
+        }
+
+    def test_cleans_up_inner_dict(self):
+        data = {
+            'foo': {
+                'bar': {
+                    'baz': {
+                        'FOO': 'foo',
+                        'BAR': None,
+                    }
+                }
+            }
+        }
+
+        assert clean_data(data) == {
+            'foo': {
+                'bar': {
+                    'baz': {
+                        'FOO': 'foo',
+                    }
+                }
+            }
+        }
