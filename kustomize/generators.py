@@ -4,6 +4,7 @@ import sys
 from copy import deepcopy
 from dataclasses import dataclass, is_dataclass, asdict
 from pathlib import Path
+from typing import Union
 
 import yaml
 
@@ -84,9 +85,23 @@ def _generate_for_source(source_path: Path, dest_path: Path, attr_name: str):
 def _dump_data(data, path):
     with open(str(path), 'w') as f:
         if isinstance(data, tuple):
-            yaml.safe_dump_all(data, f)
+            yaml.safe_dump_all(_clean_data(data), f)
         else:
-            yaml.safe_dump(data, f)
+            yaml.safe_dump(_clean_data(data), f)
+
+
+def _clean_data(data: Union[dict, list, tuple]):
+    if isinstance(data, tuple):
+        return tuple(_clean_data(d) for d in data)
+    if isinstance(data, list):
+        return list(_clean_data(d) for d in data)
+    for k in list(data.keys()):
+        v = data[k]
+        if v is None:
+            del data[k]
+        elif isinstance(v, dict):
+            data[k] = _clean_data(v)
+    return data
 
 
 def _get_kustomization_data(attr_name, dest_path):
