@@ -1,3 +1,8 @@
+0.3.5
+=====
+
+* Now supporting Kubernetes objects correctly.
+
 0.3.4
 =====
 
