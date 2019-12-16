@@ -1,3 +1,8 @@
+0.4.0
+=====
+
+* Now supporting models from python-kubernetes>=11.
+
 0.3.6
 =====
 
