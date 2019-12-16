@@ -16,7 +16,7 @@ def _get_options(args):
     )
     parser.add_argument(
         '--verbose', '-v', default=False, action='store_true',
-        help='Print logs to stdout.'
+        help='Print debug logs to stdout.'
     )
     parser.add_argument(
         'source_path',
