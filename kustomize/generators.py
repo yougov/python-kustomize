@@ -1,5 +1,6 @@
 import datetime as dt
 import importlib
+import logging
 import os
 import sys
 from copy import deepcopy
@@ -12,6 +13,9 @@ import yaml
 SERIALIZABLE_TYPES = (float, bool, bytes, str, int, dt.date, dt.datetime)
 
 
+logger = logging.getLogger(__name__)
+
+
 @dataclass
 class Extension:
     module_name: str
@@ -20,6 +24,8 @@ class Extension:
 
     @classmethod
     def from_reference(cls, string: str):
+        logger.debug('Getting extension from %s', string)
+
         parts = string.split(':')
 
         if len(parts) > 1:
@@ -69,6 +75,9 @@ def _generate_for_source(source_path: Path, dest_path: Path, attr_name: str):
     if not (source_path / 'kustomization.py').is_file():
         return
 
+    logger.info(
+        'Generating kustomization from %s to %s', source_path, dest_path)
+
     os.makedirs(str(dest_path), 0o755, exist_ok=True)
     prepended = False
     source_path_str = str(source_path)
@@ -86,6 +95,7 @@ def _generate_for_source(source_path: Path, dest_path: Path, attr_name: str):
 
 
 def _dump_data(data, path):
+    logger.debug('Dumping data into %s', path)
     with open(str(path), 'w') as f:
         if isinstance(data, tuple):
             yaml.safe_dump_all(clean_data(data), f)
@@ -192,15 +202,21 @@ def _k8s_to_serializable(obj):
 
 
 def to_dict_or_dicts(obj):
+    logger.debug(
+        'Transforming object of type %s into dict or dicts', type(obj))
     if isinstance(obj, tuple):
         return tuple(to_dict_or_dicts(o) for o in obj)
     if _is_kubernetes(obj):
+        logger.debug('Object is compatible with kubernetes models')
         return _k8s_to_serializable(obj)
     if hasattr(obj, 'to_dict'):
+        logger.debug('Object has a simple to_dict, using it for conversion')
         obj = obj.to_dict()
     elif is_dataclass(obj):
+        logger.debug('Object is dataclass, using it for conversion')
         obj = asdict(obj)
     elif is_attr_class(obj):
+        logger.debug('Object is from attr class, using it for conversion')
         import attr
         obj = attr.asdict(obj, recurse=True)
     elif hasattr(obj, '__dict__'):

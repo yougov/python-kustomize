@@ -1,8 +1,7 @@
 import argparse
+import logging
 import sys
 from pathlib import Path
-
-from kustomize.generators import generate
 
 
 def _get_options(args):
@@ -14,6 +13,10 @@ def _get_options(args):
     parser.add_argument(
         '--attr-name', '-a', default='kustomization', required=False,
         help='Name of the attribute from the kustomization.py files.'
+    )
+    parser.add_argument(
+        '--verbose', '-v', default=False, action='store_true',
+        help='Print logs to stdout.'
     )
     parser.add_argument(
         'source_path',
@@ -31,6 +34,17 @@ def _get_options(args):
 
 def run(args):
     options = _get_options(args)
+    if options.verbose:
+        level = logging.DEBUG
+    else:
+        level = logging.INFO
+    logging.basicConfig(level=level)
+    _generate_from_options(options)
+
+
+def _generate_from_options(options):
+    from kustomize.generators import generate
+
     source_path = Path(options.source_path)
     dest_path = Path(options.dest_path)
     generate(source_path, dest_path, options.attr_name)
