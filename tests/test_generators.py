@@ -123,6 +123,17 @@ def test_generates_kubernetes(cd_fixtures, create_build_path):
     assert_yaml_dirs_equal(build_path, reference_path)
 
 
+def test_generates_kubernetes11(cd_fixtures, create_build_path):
+    fixtures_path = cd_fixtures('kubernetes11')
+    build_path = create_build_path()
+    python_path = fixtures_path / 'python'
+    reference_path = fixtures_path / 'reference'
+
+    generate(python_path, build_path)
+
+    assert_yaml_dirs_equal(build_path, reference_path)
+
+
 class TestCleanData:
     def test_cleans_up_inner_list_of_dicts(self):
         data = {

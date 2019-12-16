@@ -161,9 +161,15 @@ def is_attr_class(obj) -> bool:
 
 
 def _is_kubernetes(obj):
-    return all(
-        hasattr(obj, attr)
-        for attr in ('to_dict', 'swagger_types', 'attribute_map')
+    return (
+        hasattr(obj, 'to_dict') and
+        hasattr(obj, 'attribute_map') and
+        (
+            # python-kubernetes<11
+            hasattr(obj, 'swagger_types') or
+            # python-kubernetes>=11
+            hasattr(obj, 'openapi_types')
+        )
     )
 
 
@@ -187,14 +193,15 @@ def _k8s_to_serializable(obj):
     if isinstance(obj, dict):
         obj_dict = obj
     else:
-        # Convert model obj to dict except
-        # attributes `swagger_types`, `attribute_map`
-        # and attributes which value is not None.
-        # Convert attribute name to json key in
-        # model definition for request.
+        if hasattr(obj, 'openapi_types'):
+            # python-kubernetes>=11
+            openapi_types = obj.openapi_types
+        else:
+            # python-kubernetes<11
+            openapi_types = obj.swagger_types
         obj_dict = {
             obj.attribute_map[attr]: getattr(obj, attr)
-            for attr, _ in obj.swagger_types.items()
+            for attr, _ in openapi_types.items()
             if getattr(obj, attr) is not None
         }
 

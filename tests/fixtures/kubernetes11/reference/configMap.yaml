@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: the-map
+  labels:
+    when: 2019-01-01T00:00:00
+    numbers: [1, 2]
+    others: [3, 4]
+data:
+  altGreeting: "Good Morning!"
+  enableRisky: "false"
