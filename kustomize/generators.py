@@ -36,6 +36,9 @@ class Extension:
             attr_name = module_name.split('.')[-1]
 
         module = importlib.__import__(module_name)
+        inner_modules = module_name.split('.')[1:]
+        for inner_module in inner_modules:
+            module = getattr(module, inner_module)
         importlib.reload(module)
         data = to_dict_or_dicts(getattr(module, attr_name))
 
@@ -78,7 +81,6 @@ def _generate_for_source(source_path: Path, dest_path: Path, attr_name: str):
     logger.info(
         'Generating kustomization from %s to %s', source_path, dest_path)
 
-    os.makedirs(str(dest_path), 0o755, exist_ok=True)
     prepended = False
     source_path_str = str(source_path)
     if source_path_str not in sys.path:
@@ -96,6 +98,7 @@ def _generate_for_source(source_path: Path, dest_path: Path, attr_name: str):
 
 def _dump_data(data, path):
     logger.debug('Dumping data into %s', path)
+    os.makedirs(os.path.dirname(path), mode=0o755, exist_ok=True)
     with open(str(path), 'w') as f:
         if isinstance(data, tuple):
             yaml.safe_dump_all(clean_data(data), f)
