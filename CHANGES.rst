@@ -1,3 +1,8 @@
+0.4.1
+=====
+
+* Fixing directory creation for dumping built YAML files.
+
 0.4.0
 =====
 
