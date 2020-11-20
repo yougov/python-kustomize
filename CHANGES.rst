@@ -1,3 +1,8 @@
+0.5.0
+=====
+
+* Separating generated modules by directories to avoid name clashes.
+
 0.4.1
 =====
 
