@@ -50,7 +50,7 @@ class Extension:
 
     @property
     def build_path(self) -> Path:
-        path = Path(*self.module_name.split('.'))
+        path = Path(*self.module_name.split('.'), self.attr_name)
         return path.with_suffix('.yaml')
 
     def build(self, dest_path: Path) -> Path:
