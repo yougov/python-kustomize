@@ -1,10 +1,10 @@
+Welcome to |project| documentation!
+===================================
+
 .. toctree::
    :maxdepth: 1
 
    history
-
-
-.. include:: ../README.rst
 
 
 .. automodule:: kustomize

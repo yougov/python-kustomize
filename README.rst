@@ -1,21 +1,25 @@
 .. image:: https://img.shields.io/pypi/v/kustomize.svg
-   :target: `PyPI link`_
+   :target: https://pypi.org/project/kustomize
 
 .. image:: https://img.shields.io/pypi/pyversions/kustomize.svg
-   :target: `PyPI link`_
 
-.. _PyPI link: https://pypi.org/project/kustomize
+.. image:: https://github.com/coherent-oss/python-kustomize/workflows/tests/badge.svg
+   :target: https://github.com/coherent-oss/python-kustomize/actions?query=workflow%3A%22tests%22
+   :alt: tests
 
-.. image:: https://github.com/coherent-oss/python-kustomize/workflows/Automated%20Tests/badge.svg
-   :target: https://github.com/coherent-oss/python-kustomize/actions?query=workflow%3A%22Automated+Tests%22
-   :alt: Automated Tests
+.. image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json
+    :target: https://github.com/astral-sh/ruff
+    :alt: Ruff
 
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/psf/black
    :alt: Code style: Black
 
-.. .. image:: https://readthedocs.org/projects/skeleton/badge/?version=latest
-..    :target: https://skeleton.readthedocs.io/en/latest/?badge=latest
+.. .. image:: https://readthedocs.org/projects/PROJECT_RTD/badge/?version=latest
+..    :target: https://PROJECT_RTD.readthedocs.io/en/latest/?badge=latest
+
+.. image:: https://img.shields.io/badge/skeleton-2023-informational
+   :target: https://blog.jaraco.com/skeleton
 
 Build your Kubernetes manifests for Kustomize in Python!
 
