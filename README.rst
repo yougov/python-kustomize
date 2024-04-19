@@ -1,6 +1,14 @@
 python-kustomize
 ================
 
+----
+
+**This project is no longer maintained and will be archived soon.**
+
+For an up-to-date and maintained version please go to: https://github.com/coherent-oss/python-kustomize
+
+----
+
 Build your Kubernetes manifests for Kustomize in Python!
 
 .. image:: https://img.shields.io/pypi/v/kustomize.svg
