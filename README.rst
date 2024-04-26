@@ -3,7 +3,7 @@ python-kustomize
 
 ----
 
-**This project is no longer maintained and will be archived soon.**
+**This project is no longer maintained and is now archived.**
 
 For an up-to-date and maintained version please go to: https://github.com/coherent-oss/python-kustomize
 
